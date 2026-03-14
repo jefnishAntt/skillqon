@@ -1,27 +1,42 @@
-import { Rocket, Settings, ShieldCheck } from "lucide-react";
+import { Briefcase, Rocket, Settings, ShieldCheck } from "lucide-react";
 import { Testimonial } from "./app/page";
 
 export const SERVICES_DATA = [
   {
-    title: "Digital Education",
-    description: "Empowering the next generation of tech leaders through project-based learning and industry mentorship.",
-    icon: Rocket,
-    items: ["Full-Stack Bootcamps", "Cloud Architecture", "Data Science Tracks"],
-    href: "/education" // Ready for routing
+    title: "EdTech Solutions",
+    description: "Delivering modern, industry-relevant education and professional training programs designed for real-world career readiness.",
+    icon: Rocket, // Keeping Rocket for the "launching careers" vibe
+    items: [
+      "Professional Skill Development",
+      "Industry-Oriented Training",
+      "Certification & Corporate Programs",
+      "Tech-Based Learning Solutions"
+    ],
+    href: "/education"
   },
   {
-    title: "Strategic Consulting",
-    description: "Navigating complex digital transformations with data-driven strategies and security-first frameworks.",
-    icon: ShieldCheck,
-    items: ["Business Intelligence", "Cybersecurity Audit", "Agile Transformation"],
-    href: "/consulting"
-  },
-  {
-    title: "Tech Solutions",
-    description: "Building scalable software and infrastructure that powers modern enterprises globally.",
+    title: "Technology Development",
+    description: "Developing modern digital solutions and software that support businesses through every stage of their digital transformation journey.",
     icon: Settings,
-    items: ["Custom SaaS Dev", "Legacy Modernization", "AI/ML Integration"],
+    items: [
+      "Website & App Development",
+      "Custom Software Solutions",
+      "Digital Platform Engineering",
+      "Technology Integration"
+    ],
     href: "/tech"
+  },
+  {
+    title: "Placement & Career Support",
+    description: "Connecting students and professionals with industry opportunities through dedicated guidance and skill-to-employment programs.",
+    icon: Briefcase, // Suggested icon change from ShieldCheck to better fit "Placement"
+    items: [
+      "Career Guidance & Internships",
+      "Industry Placement Assistance",
+      "Skill-to-Employment Tracks",
+      "Professional Networking"
+    ],
+    href: "/careers"
   }
 ];
 
