@@ -29,11 +29,11 @@ const Navbar = () => {
   }, [isOpen]);
 
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "About", href: "/about" },
-    { name: "Services", href: "/services" },
-    { name: "Placements", href: "/placements" },
-    { name: "Contact", href: "/contact" },
+    // { name: "Home", href: "" },
+    { name: "About", href: "#about" },
+    { name: "Services", href: "#services" },
+    { name: "Placements", href: "#placements" },
+    { name: "Contact", href: "#contact" },
   ];
 
   return (

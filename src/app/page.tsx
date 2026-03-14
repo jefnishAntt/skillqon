@@ -383,7 +383,7 @@ export default function WaretechLanding() {
         </div>
       </section>
       {/* About Section */}
-      <section className="py-16 lg:py-20 bg-white">
+      <section id="about" className="py-16 lg:py-20 bg-white">
         <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-16">
           {/* Left Column: Image Grid */}
           <div className="lg:w-1/2 relative">
@@ -541,7 +541,7 @@ export default function WaretechLanding() {
         </div>
       </section>
       {/* Services Section */}
-      <section className="py-16 lg:py-20 bg-[#F8FAFC]">
+      <section id="services" className="py-16 lg:py-20 bg-[#F8FAFC]">
         <div className="container mx-auto px-4">
           {/* Header with better visual hierarchy */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-24 gap-12">
@@ -589,7 +589,7 @@ export default function WaretechLanding() {
         </div>
       </section>
       {/* Placements Section */}
-      <section className="bg-white py-16 lg:py-20 border-y border-slate-100">
+      <section id="placements" className="bg-white py-16 lg:py-20 border-y border-slate-100">
         <div className="container mx-auto px-4">
           {/* Header Area - Clean & Direct */}
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
@@ -706,7 +706,7 @@ export default function WaretechLanding() {
       {/* Testimonials Section */}
       <Testimonials />
       {/* Final CTA Section */}
-      <section className="py-20">
+      <section id="contact" className="py-20">
         <div className="container mx-auto px-4">
           <div className="bg-blue-600 rounded-3xl p-12 lg:p-20 text-center text-white relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32" />
