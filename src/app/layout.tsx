@@ -30,7 +30,7 @@ export default function RootLayout({
         className={`${inter.variable} ${geistMono.variable} font-sans antialiased`}
       >
         <Navbar />
-        <main className="pt-24 min-h-screen">
+        <main className="pt-20 lg:pt-24 min-h-screen">
         {children}
       </main>
       <Footer />
