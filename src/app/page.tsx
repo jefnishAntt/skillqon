@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import {
   Search,
@@ -24,12 +24,12 @@ import {
   Plus,
   Hash,
 } from "lucide-react";
-import Navbar from "@/components/Navbar";
 import Image from "next/image";
 import { SERVICES_DATA, TESTIMONIALS_DATA } from "@/config";
 import { Button } from "@/ui/Button";
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
+import { useContactModal } from "./ContextProvider";
 
 // --- Components ---
 
@@ -47,237 +47,127 @@ export interface Testimonial {
   image: string;
 }
 
-// --- Components ---
+// --- Sub Components ---
 
 const ServiceRow = ({ title, description, items, index }: ServiceCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Use a toggle specifically for mobile/touch
-  const handleToggle = (e: React.MouseEvent) => {
-    // Prevent event bubbling if this row is nested
-    e.stopPropagation();
-    setIsOpen(!isOpen);
+  // Memoized toggle to prevent recreation on every render
+  const toggleOpen = useCallback(
+    (e: React.MouseEvent | React.KeyboardEvent) => {
+      e.stopPropagation();
+      setIsOpen((prev) => !prev);
+    },
+    [],
+  );
+
+  // Desktop hover guard
+  const handleMouseEnter = () => {
+    if (window.matchMedia("(hover: hover)").matches) setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (window.matchMedia("(hover: hover)").matches) setIsOpen(false);
   };
 
   return (
-    <div
-      className="group relative border-b border-slate-100 py-6 lg:py-12 transition-all duration-500 ease-in-out cursor-pointer overflow-hidden"
-      // Desktop: Only trigger hover on devices that support it
-      onMouseEnter={() => {
-        if (window.matchMedia("(hover: hover)").matches) setIsOpen(true);
-      }}
-      onMouseLeave={() => {
-        if (window.matchMedia("(hover: hover)").matches) setIsOpen(false);
-      }}
-      // Universal Click (Mobile Primary)
-      onClick={handleToggle}
+    <section
+      className="group relative border-b border-slate-100 transition-colors duration-500 ease-in-out hover:bg-slate-50/50"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-      {/* 1. The Background Accent */}
+      {/* 1. Background Accent - Optimized with will-change */}
       <div
-        className={`absolute inset-0 bg-blue-600/5 transition-all duration-700 -z-10 ${
+        className={`absolute inset-0 bg-blue-600/3 transition-transform duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] -z-10 will-change-transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       />
 
-      <div className="flex flex-col lg:grid lg:grid-cols-12 items-start lg:items-center gap-4 lg:gap-8 relative z-10 px-4 lg:px-0">
-        {/* Title Section */}
-        <div className="flex items-center justify-between w-full lg:contents">
-          <div className="flex items-center gap-4 lg:col-span-1">
-            <span className="font-mono text-[11px] text-blue-600 font-bold">
-              [{index.toString().padStart(2, "0")}]
-            </span>
-            <h3 className="lg:hidden text-xl font-bold text-slate-900 uppercase tracking-tight">
-              {title}
-            </h3>
+      <button
+        onClick={toggleOpen}
+        aria-expanded={isOpen}
+        className="w-full text-left py-6 lg:py-12 px-4 lg:px-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-inset"
+      >
+        <div className="flex flex-col lg:grid lg:grid-cols-12 items-start lg:items-center gap-4 lg:gap-8 relative z-10">
+          {/* Index & Mobile Title */}
+          <div className="flex items-center justify-between w-full lg:contents">
+            <div className="flex items-center gap-4 lg:col-span-1">
+              <span className="font-mono text-[11px] text-blue-600 font-bold tabular-nums">
+                {index.toString().padStart(2, "0")}
+              </span>
+              <h3 className="lg:hidden text-xl font-bold text-slate-900 uppercase tracking-tight">
+                {title}
+              </h3>
+            </div>
+
+            {/* Desktop Title */}
+            <div className="hidden lg:block lg:col-span-5">
+              <h3
+                className={`text-4xl font-bold text-slate-900 tracking-tight uppercase transition-transform duration-500 ease-out ${isOpen ? "translate-x-3" : "translate-x-0"}`}
+              >
+                {title}
+              </h3>
+            </div>
+
+            {/* Mobile Chevron */}
+            <div className="lg:hidden">
+              <ChevronRight
+                size={20}
+                className={`transition-transform duration-500 text-slate-400 ${isOpen ? "rotate-90 text-blue-600" : ""}`}
+              />
+            </div>
           </div>
 
-          {/* Desktop Title */}
-          <div className="hidden lg:block lg:col-span-5">
-            <h3 className="text-4xl font-bold text-slate-900 tracking-tight uppercase transition-transform duration-500 group-hover:translate-x-2">
-              {title}
-            </h3>
+          {/* Description */}
+          <div className="lg:col-span-4">
+            <p className="text-slate-500 text-sm md:text-base font-light leading-relaxed max-w-prose">
+              {description}
+            </p>
           </div>
 
-          {/* Mobile Chevron (Visible only on mobile inside this flex container) */}
-          <div className="lg:hidden">
-            <ChevronRight
-              size={20}
-              className={`transition-transform duration-500 text-slate-400 ${isOpen ? "rotate-90 text-slate-900" : ""}`}
-            />
-          </div>
-        </div>
-
-        {/* Description */}
-        <div className="lg:col-span-4">
-          <p className="text-slate-500 text-sm md:text-base font-light leading-relaxed">
-            {description}
-          </p>
-        </div>
-
-        {/* Desktop Status Label */}
-        <div className="hidden lg:flex lg:col-span-2 justify-end items-center gap-4">
-          <span
-            className={`font-mono text-[9px] font-black uppercase tracking-widest transition-all duration-500 ${isOpen ? "opacity-100 text-blue-600" : "opacity-0 text-slate-300"}`}
-          >
-            {isOpen ? "System_Active" : "Initialize"}
-          </span>
+          {/* Icon */}
           <div
-            className={`w-10 h-10 flex items-center justify-center rounded-full border transition-all duration-300 ${isOpen ? "bg-slate-900 border-slate-900 text-white" : "border-slate-100 text-slate-400"}`}
+            className={`hidden lg:flex w-12 h-12 items-center justify-center rounded-full border transition-all duration-500 ${
+              isOpen
+                ? "bg-slate-900 border-slate-900 text-white scale-110"
+                : "border-slate-200 text-slate-400"
+            }`}
           >
             <ChevronRight
-              size={16}
+              size={18}
               className={`transition-transform duration-500 ${isOpen ? "rotate-90" : ""}`}
             />
           </div>
         </div>
-      </div>
+      </button>
 
-      {/* Expanded Pane - Smooth Height Transition */}
+      {/* 2. Expanded Pane - Using Grid for True 0 -> Auto Transition */}
       <div
-        className={`transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] ${
-          isOpen ? "max-h-[500px] opacity-100 mt-8" : "max-h-0 opacity-0 mt-0"
+        className={`grid transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] ${
+          isOpen
+            ? "grid-rows-[1fr] opacity-100 pb-10"
+            : "grid-rows-[0fr] opacity-0"
         }`}
       >
-        <div className="lg:ml-[8.33%] pt-8 border-t border-slate-100/50 px-4 lg:px-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-wrap gap-4 lg:gap-12">
-            {items.map((item, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
-                <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                  {item}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export const Testimonials = () => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: "start",
-    loop: true, // Senior choice: loop for smoother edge-to-edge UX
-    skipSnaps: false,
-    dragFree: true,
-  });
-
-  const [prevBtnEnabled, setPrevBtnEnabled] = useState(false);
-  const [nextBtnEnabled, setNextBtnEnabled] = useState(false);
-
-  const scrollPrev = useCallback(
-    () => emblaApi && emblaApi.scrollPrev(),
-    [emblaApi],
-  );
-  const scrollNext = useCallback(
-    () => emblaApi && emblaApi.scrollNext(),
-    [emblaApi],
-  );
-
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setPrevBtnEnabled(emblaApi.canScrollPrev());
-    setNextBtnEnabled(emblaApi.canScrollNext());
-  }, [emblaApi]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    onSelect();
-    emblaApi.on("select", onSelect);
-    emblaApi.on("reInit", onSelect);
-  }, [emblaApi, onSelect]);
-
-  return (
-    <section className="relative py-16 lg:py-20 bg-slate-50 overflow-hidden border-t border-slate-100">
-      <div className="container mx-auto px-6 lg:px-12">
-        {/* Header: Centered for clear hierarchy */}
-        <div className="max-w-4xl mx-auto mb-20 text-center">
-          {/* Label: Using justify-center to align the bar and text */}
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <span className="w-12 h-px bg-blue-600"></span>
-            <span className="text-blue-600 font-mono text-[11px] uppercase tracking-[0.5em] font-black">
-              Social Proof
-            </span>
-            <span className="w-12 h-px bg-blue-600"></span>{" "}
-            {/* Optional: Added a second bar for symmetrical balance */}
-          </div>
-
-          {/* Heading: Centered via the parent text-center */}
-          <h2 className="text-5xl md:text-6xl font-bold text-slate-950 leading-[0.85] tracking-tighter uppercase">
-            Trusted by the <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-slate-200 to-slate-400 italic font-light">
-              Ambitious.
-            </span>
-          </h2>
-        </div>
-        {/* Carousel Wrapper: Edge Navigation Logic */}
-        <div className="relative">
-          {/* Navigation Overlay - Visible only on Desktop for cleaner UX */}
-          <div className="hidden lg:flex absolute top-1/2 -translate-y-1/2 -left-16 -right-16 justify-between pointer-events-none z-20">
-            <NavButton
-              onClick={scrollPrev}
-              disabled={!prevBtnEnabled}
-              icon={<ChevronLeft size={24} />}
-              className="pointer-events-auto shadow-2xl"
-            />
-            <NavButton
-              onClick={scrollNext}
-              disabled={!nextBtnEnabled}
-              icon={<ChevronRight size={24} />}
-              className="pointer-events-auto shadow-2xl"
-            />
-          </div>
-
-          {/* Carousel Viewport */}
-          <div className="embla overflow-hidden rounded-3xl" ref={emblaRef}>
-            <div className="embla__container flex -ml-6 lg:-ml-10">
-              {TESTIMONIALS_DATA.map((t, i) => (
+        <div className="overflow-hidden">
+          <div className="lg:ml-[8.33%] pt-8 border-t border-slate-100 px-4 lg:px-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap gap-y-4 gap-x-12">
+              {items.map((item, i) => (
                 <div
                   key={i}
-                  /* Senior Logic: 100% (Mobile), 50% (Tablet), 33.33% (Large Desktop) */
-                  className="embla__slide flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.33%] pl-6 lg:pl-10"
+                  className={`flex items-center gap-3 transition-all duration-700 delay-[${i * 50}ms] ${
+                    isOpen
+                      ? "translate-y-0 opacity-100"
+                      : "translate-y-4 opacity-0"
+                  }`}
                 >
-                  <div className="group relative h-full flex flex-col bg-white p-10 lg:p-12 rounded-2xl border border-slate-100 shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-blue-900/5 hover:-translate-y-1">
-                    <Quote className="absolute top-8 right-8 size-10 text-slate-50 group-hover:text-blue-50 transition-colors" />
-
-                    <blockquote className="relative z-10 flex-grow">
-                      <p className="text-lg lg:text-xl text-slate-700 leading-relaxed font-light italic mb-10">
-                        “{t.content}”
-                      </p>
-                    </blockquote>
-
-                    <footer className="flex items-center gap-4 pt-8 border-t border-slate-50">
-                      <div className="relative shrink-0 w-12 h-12 rounded-full bg-slate-100 overflow-hidden">
-                        <div className="absolute inset-0 bg-linear-to-tr from-slate-200 to-white" />
-                      </div>
-                      <div className="flex flex-col">
-                        <cite className="not-italic font-black text-slate-900 text-[10px] uppercase tracking-widest">
-                          {t.name}
-                        </cite>
-                        <span className="text-[9px] font-bold text-blue-600/60 uppercase tracking-[0.2em] mt-0.5">
-                          {t.role}
-                        </span>
-                      </div>
-                    </footer>
-                  </div>
+                  <div className="w-1 h-1 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.6)]" />
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-slate-600">
+                    {item}
+                  </span>
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Mobile Navigation - Kept simple below the cards */}
-          <div className="flex lg:hidden justify-center gap-6 mt-12">
-            <NavButton
-              onClick={scrollPrev}
-              disabled={!prevBtnEnabled}
-              icon={<ChevronLeft size={20} />}
-            />
-            <NavButton
-              onClick={scrollNext}
-              disabled={!nextBtnEnabled}
-              icon={<ChevronRight size={20} />}
-            />
           </div>
         </div>
       </div>
@@ -285,91 +175,149 @@ export const Testimonials = () => {
   );
 };
 
-const NavButton = ({ onClick, disabled, icon, className = "" }: any) => (
-  <button
-    onClick={onClick}
-    disabled={disabled}
-    className={`group w-14 h-14 rounded-full bg-white border border-slate-200 flex items-center justify-center transition-all duration-500 ${
-      disabled
-        ? "opacity-0 cursor-not-allowed"
-        : "hover:bg-slate-950 hover:border-slate-950 hover:text-white active:scale-90"
-    } ${className}`}
-  >
-    {icon}
-  </button>
-);
+const Testimonials = () => {
+  // align: "center" is the key for that premium "focus" feel
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "center",
+    loop: true,
+    skipSnaps: false,
+    dragFree: false, // Set to false for cleaner "snap" to center
+    containScroll: false, // Allow partial visibility of outer cards
+  });
 
-const ValueStrip = () => {
-  const pillars = [
-    {
-      icon: <BarChart2 size={20} />,
-      title: "Business Strategy",
-      desc: "Sales consulting & digital transformation.",
-    },
-    {
-      icon: <Rocket size={20} />,
-      title: "Industry EdTech",
-      desc: "Professional certifications & training.",
-    },
-    {
-      icon: <Settings size={20} />,
-      title: "Digital Dev",
-      desc: "Custom software & app solutions.",
-    },
-  ];
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [prevBtnEnabled, setPrevBtnEnabled] = useState(false);
+  const [nextBtnEnabled, setNextBtnEnabled] = useState(false);
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+
+  const onSelect = useCallback((api: any) => {
+    setSelectedIndex(api.selectedScrollSnap());
+    setPrevBtnEnabled(api.canScrollPrev());
+    setNextBtnEnabled(api.canScrollNext());
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect(emblaApi);
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+    return () => {
+      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
+    };
+  }, [emblaApi, onSelect]);
 
   return (
-    <div className="relative w-full bg-slate-950 text-white overflow-hidden border-y border-slate-800/50">
-      {/* Subtle Mesh Gradient Background */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none">
-        <div className="absolute -left-[10%] top-0 w-[40%] h-full bg-blue-600/20 blur-[120px] rounded-full" />
-        <div className="absolute -right-[10%] bottom-0 w-[40%] h-full bg-indigo-600/10 blur-[120px] rounded-full" />
-      </div>
+    <section className="bg-slate-50 overflow-hidden border-t border-slate-100 py-20 lg:py-32">
+      <div className="container mx-auto px-6 lg:px-12">
+        
+        {/* Header remains the same... */}
+        <div className="max-w-4xl mx-auto mb-16 lg:mb-24 text-center">
+          <h2 className="text-4xl md:text-6xl font-bold text-slate-950 leading-[0.9] tracking-tighter uppercase italic">
+            Built for the <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-400 to-slate-200">
+              Ambitious.
+            </span>
+          </h2>
+        </div>
 
-      <div className="container mx-auto px-6 py-10 lg:py-12 relative z-10">
-        {/* Responsive Grid: Stacks on mobile, 3-cols on desktop */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-16">
-          {pillars.map((pillar, idx) => (
-            <div
-              key={idx}
-              className="group flex items-center md:items-start gap-5 transition-all duration-500"
-            >
-              {/* Icon Container with sophisticated glass effect */}
-              <div className="relative flex-shrink-0">
-                <div className="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700/50 flex items-center justify-center transition-all duration-300 group-hover:border-blue-500/50 group-hover:bg-slate-800 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]">
-                  <span className="text-slate-400 group-hover:text-blue-400 transition-colors duration-300">
-                    {pillar.icon}
-                  </span>
-                </div>
-              </div>
+        <div className="relative group/carousel">
+          {/* Desktop Navigation - Hidden pointer events so they don't block the cards */}
+          <div className="hidden xl:flex absolute top-1/2 -translate-y-1/2 -left-8 -right-8 justify-between pointer-events-none z-30 opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-500">
+             <NavButton onClick={scrollPrev} disabled={!prevBtnEnabled} icon={<ChevronLeft />} className="pointer-events-auto" />
+             <NavButton onClick={scrollNext} disabled={!nextBtnEnabled} icon={<ChevronRight />} className="pointer-events-auto" />
+          </div>
 
-              {/* Text Content */}
-              <div className="flex flex-col">
-                <h4 className="text-sm font-bold tracking-widest uppercase text-slate-200 mb-1.5 group-hover:text-white transition-colors">
-                  {pillar.title}
-                </h4>
-                <p className="text-sm text-slate-500 leading-relaxed font-light max-w-[240px]">
-                  {pillar.desc}
-                </p>
-              </div>
+          <div className="embla overflow-visible" ref={emblaRef}>
+            <div className="embla__container flex -ml-4 lg:-ml-12">
+              {TESTIMONIALS_DATA.map((t, i) => {
+                const isActive = selectedIndex === i;
+                
+                return (
+                  <div
+                    key={i}
+                    className="embla__slide flex-[0_0_85%] md:flex-[0_0_60%] lg:flex-[0_0_45%] pl-4 lg:pl-12 min-w-0"
+                  >
+                    <article 
+                      className={`
+                        relative h-full flex flex-col bg-white p-8 lg:p-14 rounded-xl border border-slate-100 
+                        transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform
+                        ${isActive 
+                          ? "opacity-100 scale-100 shadow-2xl shadow-blue-900/10" 
+                          : "opacity-30 scale-[0.9] grayscale-[0.5] blur-[1px]"
+                        }
+                      `}
+                    >
+                      <Quote className={`absolute top-10 right-10 size-12 transition-colors duration-700 ${isActive ? 'text-blue-50' : 'text-slate-50'}`} />
 
-              {/* Vertical Divider for Desktop - Hidden on last item */}
-              {idx < pillars.length - 1 && (
-                <div className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-[1px] h-12 bg-gradient-to-b from-transparent via-slate-800 to-transparent" />
-              )}
+                      <div className="relative z-10 flex-grow">
+                        <p className={`text-xl lg:text-2xl leading-relaxed font-light mb-12 transition-colors duration-700 ${isActive ? 'text-slate-800' : 'text-slate-400'}`}>
+                          &ldquo;{t.content}&rdquo;
+                        </p>
+                      </div>
+
+                      <footer className="flex items-center gap-5 pt-8 border-t border-slate-50">
+                        <div className="w-14 h-14 rounded-2xl bg-slate-100 overflow-hidden" />
+                        <div className="flex flex-col">
+                          <cite className="not-italic font-black text-slate-900 text-[11px] uppercase tracking-widest">
+                            {t.name}
+                          </cite>
+                          <span className="text-[10px] font-bold text-blue-600/50 uppercase tracking-[0.15em] mt-1.5">
+                            {t.role}
+                          </span>
+                        </div>
+                      </footer>
+                    </article>
+                  </div>
+                );
+              })}
             </div>
-          ))}
+          </div>
+          
+          {/* Mobile Pagination (Simplified dots or buttons) */}
+          <div className="flex justify-center gap-2 mt-12">
+            {TESTIMONIALS_DATA.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => emblaApi?.scrollTo(i)}
+                className={`h-1.5 transition-all duration-500 rounded-full ${selectedIndex === i ? 'w-8 bg-blue-600' : 'w-2 bg-slate-200'}`}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
-
-      {/* Bottom accent line for that "Senior" finish */}
-      <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
-    </div>
+    </section>
   );
 };
 
-export default function WaretechLanding() {
-  const [activeRow, setActiveRow] = useState<number | null>(null);
+const NavButton = memo(({ onClick, disabled, icon, className = "" }: any) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    className={`
+      flex items-center justify-center w-14 h-14 rounded-full 
+      bg-white border border-slate-200 text-slate-900
+      transition-all duration-300 ease-out
+      hover:bg-slate-900 hover:text-white hover:border-slate-900
+      disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white
+      focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2
+      ${className}
+    `}
+    aria-label="Carousel navigation"
+  >
+    {icon}
+  </button>
+));
+
+NavButton.displayName = "NavButton";
+
+
+// --- Main Components ---
+export default function Home() {
+  const { openModal } = useContactModal();
   return (
     <>
       {/* Hero Section */}
@@ -377,103 +325,92 @@ export default function WaretechLanding() {
         {/* Background Decorative Element */}
         <div className="absolute top-0 right-0 -z-10 w-1/2 h-full bg-radial-gradient from-blue-50/40 to-transparent opacity-60" />
 
-        <div className="flex-grow flex items-center">
-          <div className="container mx-auto px-6 lg:px-12 py-12 lg:py-24">
-            <div className="grid lg:grid-cols-12 items-center gap-12 lg:gap-8">
-              {/* Content Column - Spans 7/12 for better visual balance */}
-              <div className="lg:col-span-7 z-10 text-center lg:text-left">
-                <span className="text-[10px] font-bold text-blue-700 uppercase tracking-[0.15em] font-mono px-3 py-1 rounded-full bg-blue-50 border border-blue-100">
-                  Built for Your Business
-                </span>
+        <div className="container mx-auto px-6 lg:px-12 py-12 lg:py-24">
+          <div className="grid lg:grid-cols-12 items-center gap-12">
+            {/* Content Column - Spans 7/12 for better visual balance */}
+            <div className="lg:col-span-7 z-10 text-center lg:text-left">
+              <span className="text-[10px] font-bold text-blue-700 uppercase tracking-[0.15em] font-mono px-3 py-1 rounded-full bg-blue-50 border border-blue-100">
+                Built for Your Business
+              </span>
 
-                <h1 className="text-5xl md:text-7xl font-semibold text-slate-900 leading-[1.05] tracking-tight mt-6 mb-8">
-                  Modern Tech Support <br className="hidden xl:block" />
-                  <span className="text-slate-400 font-light">
-                    Refined for{" "}
-                  </span>
-                  <span className="text-blue-600">Reliability.</span>
-                </h1>
+              <h1 className="text-5xl md:text-7xl font-semibold text-slate-900 leading-[1.05] tracking-tight mt-6 mb-8">
+                Modern Tech Support <br className="hidden xl:block" />
+                <span className="text-slate-400 font-light">Refined for </span>
+                <span className="text-blue-600">Reliability.</span>
+              </h1>
 
-                <p className="text-lg md:text-xl text-slate-500 mb-12 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
-                  High-performance hosting, bespoke web design, and custom
-                  software engineering architected to scale your digital
-                  infrastructure.
-                </p>
+              <p className="text-lg md:text-xl text-slate-500 mb-12 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
+                High-performance hosting, bespoke web design, and custom
+                software engineering architected to scale your digital
+                infrastructure.
+              </p>
 
-                <div className="flex flex-col sm:flex-row items-center gap-6 lg:gap-10">
-                  <Button onClick={() => console.log("clicked")}>
-                    Start Your Project
-                  </Button>
+              <div className="flex flex-col sm:flex-row items-center gap-6 lg:gap-10">
+                <Button onClick={openModal}>
+                  Start Your Project
+                </Button>
 
-                  {/* Refined Social Proof */}
-                  <div className="flex items-center gap-4">
-                    <div className="flex -space-x-3">
-                      {[1, 2, 3, 4].map((i) => (
-                        <div
-                          key={i}
-                          className="relative w-12 h-12 rounded-full border-4 border-white bg-slate-100 flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-300 overflow-hidden"
-                        >
-                          <Image
-                            src={`/images/user-${i}.webp`} // Replace with your actual path
-                            alt={`Team member ${i}`}
-                            fill
-                            sizes="48px"
-                            className="object-cover"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                    <div>
-                      <div className="text-lg font-bold text-slate-900 leading-none">
-                        2,500+
+                {/* Refined Social Proof */}
+                <div className="flex items-center gap-4">
+                  <div className="flex -space-x-3">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div
+                        key={i}
+                        className="relative w-12 h-12 rounded-full border-4 border-white bg-slate-100 flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-300 overflow-hidden"
+                      >
+                        <Image
+                          src={`/images/user-${i}.webp`} // Replace with your actual path
+                          alt={`Team member ${i}`}
+                          fill
+                          sizes="48px"
+                          className="object-cover"
+                        />
                       </div>
-                      <div className="text-xs text-slate-400 font-medium uppercase tracking-wider">
-                        Trusted Partners
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                </div>
-              </div>
-
-              {/* Visual Column - Spans 5/12 */}
-              <div className="lg:col-span-5 relative">
-                <div className="relative z-10 w-full aspect-square md:aspect-[4/5] lg:aspect-square group">
-                  {/* Clean, architectural shadow and border */}
-                  <div className="absolute -inset-4 bg-blue-50/50 rounded-[2rem] blur-2xl group-hover:bg-blue-100/50 transition-colors duration-500" />
-
-                  <div className="relative h-full w-full rounded-3xl border border-slate-200/60 bg-white p-3 shadow-2xl overflow-hidden">
-                    <div className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-50">
-                      <Image
-                        src="/images/hero_sec_1.webp"
-                        alt="Cloud computing architecture"
-                        fill
-                        priority
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
+                  <div>
+                    <div className="text-lg font-bold text-slate-900 leading-none">
+                      2,500+
                     </div>
-                  </div>
-
-                  {/* Floating "Stat" Card - Adds a senior UI touch */}
-                  <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 hidden md:block animate-float">
-                    <div className="text-sm text-slate-400 mb-1">Uptime</div>
-                    <div className="text-2xl font-bold text-blue-600">
-                      99.99%
+                    <div className="text-xs text-slate-400 font-medium uppercase tracking-wider">
+                      Trusted Partners
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            {/* Visual Column - Spans 5/12 */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative z-10 w-full aspect-square md:aspect-[4/5] lg:aspect-square group">
+                {/* Clean, architectural shadow and border */}
+                <div className="absolute -inset-4 bg-blue-50/50 rounded-[2rem] blur-2xl group-hover:bg-blue-100/50 transition-colors duration-500" />
+
+                <div className="relative h-full w-full rounded-3xl border border-slate-200/60 bg-white p-3 shadow-2xl overflow-hidden">
+                  <div className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-50">
+                    <Image
+                      src="/images/hero_sec_1.webp"
+                      alt="Cloud computing architecture"
+                      fill
+                      priority
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </div>
+                </div>
+
+                {/* Floating "Stat" Card - Adds a senior UI touch */}
+                <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 hidden md:block animate-float">
+                  <div className="text-sm text-slate-400 mb-1">Uptime</div>
+                  <div className="text-2xl font-bold text-blue-600">99.99%</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Value Strip */}
-        {/* <div className="w-full border-t border-slate-100 bg-slate-50/30 backdrop-blur-md py-8">
-          <ValueStrip />
-        </div> */}
       </section>
       {/* About Section */}
-      <section id="about" className="py-16 lg:py-20 bg-slate-50">
-        <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-16">
+      <section id="about" className="bg-slate-50">
+        <div className="container mx-auto px-6 lg:px-12 py-12 lg:py-24 flex flex-col lg:flex-row gap-16">
           {/* Left Column: Image Grid */}
           <div className="lg:w-1/2 relative order-2 lg:order-1">
             <div className="relative grid grid-cols-12 gap-4 items-center">
@@ -503,8 +440,8 @@ export default function WaretechLanding() {
                 {/* Container with High-End Glassmorphism */}
                 <div className="relative flex items-center gap-5 p-5 pr-8 rounded-md bg-slate-950/90 backdrop-blur-xl border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] transition-all duration-500 ease-out group-hover:-translate-y-2 group-hover:border-blue-500/30">
                   {/* Visual Indicator: Complex Icon Stack */}
-                  <div className="relative flex-shrink-0">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 flex items-center justify-center overflow-hidden">
+                  <div className="relative shrink-0">
+                    <div className="w-14 h-14 rounded-full bg-linear-to-br from-slate-800 to-slate-900 border border-slate-700/50 flex items-center justify-center overflow-hidden">
                       {/* Inner Glow */}
                       <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
@@ -617,7 +554,7 @@ export default function WaretechLanding() {
                   className="group flex flex-col md:flex-row items-start gap-6 md:gap-12 py-4 px-4 -mx-4 transition-all duration-500 hover:bg-slate-50 cursor-default"
                 >
                   <div className="flex items-center gap-4 md:w-1/3 shrink-0">
-                    <div className="p-2 rounded-lg bg-slate-50 group-hover:bg-white group-hover:shadow-sm text-slate-400 group-hover:text-blue-600 transition-all duration-500">
+                    <div className="p-2 rounded-lg bg-slate-50 group-hover:bg-white group-hover:shadow text-slate-400 group-hover:text-blue-600 transition-all duration-500">
                       {item.icon}
                     </div>
                     <h3 className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-slate-900">
@@ -664,8 +601,8 @@ export default function WaretechLanding() {
         </div>
       </section>
       {/* Services Section */}
-      <section id="services" className="py-16 lg:py-20 bg-[#FFFFFF]">
-        <div className="container mx-auto px-4">
+      <section id="services" className="bg-[#FFFFFF]">
+        <div className="container mx-auto px-6 lg:px-12 py-12 lg:py-24">
           {/* Header */}
           <div className="grid lg:grid-cols-12 gap-12 mb-24">
             <div className="lg:col-span-7">
@@ -810,9 +747,9 @@ export default function WaretechLanding() {
       {/* Testimonials Section */}
       <Testimonials />
       {/* Final CTA Section */}
-      <section id="contact" className="py-24 lg:py-32 bg-white">
-        <div className="container mx-auto px-6 lg:px-12">
-          <div className="relative overflow-hidden bg-blue-600 rounded-[2.5rem] p-10 md:p-16 lg:p-24 text-center text-white shadow-2xl shadow-blue-900/20">
+      <section id="contact" className="bg-white">
+        <div className="container mx-auto px-6 lg:px-12 py-12 lg:py-24">
+          <div className="relative overflow-hidden bg-blue-600 rounded-xl p-10 md:p-16 lg:p-24 text-center text-white shadow-2xl shadow-blue-900/20">
             {/* Refined Background Accents */}
             <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-80 h-80 bg-black/10 rounded-full -ml-32 -mb-32 blur-3xl pointer-events-none" />
@@ -837,13 +774,9 @@ export default function WaretechLanding() {
               </p>
 
               <div className="flex flex-col sm:flex-row justify-center items-center gap-5">
-                <button className="w-full sm:w-auto bg-white text-blue-600 px-10 py-5 rounded-xl font-bold text-sm uppercase tracking-wider hover:bg-slate-50 transition-all duration-300 shadow-xl shadow-blue-900/10 active:scale-[0.98]">
-                  Start Your Project
-                </button>
+                <Button className="bg-white text-blue-600 hover:bg-blue-200" onClick={openModal} >Start Your Project</Button>
 
-                <button className="w-full sm:w-auto bg-blue-700/50 text-white border border-blue-400/30 px-10 py-5 rounded-xl font-bold text-sm uppercase tracking-wider backdrop-blur-sm hover:bg-blue-700 transition-all duration-300 active:scale-[0.98]">
-                  Contact Sales
-                </button>
+                <Button variant="outline" className="bg-blue-700/50 text-white border border-blue-400/30 hover:bg-blue-600" onClick={openModal} >Contact Sales</Button>
               </div>
 
               {/* Subtle Footer Link */}

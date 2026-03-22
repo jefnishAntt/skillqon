@@ -5,6 +5,7 @@ import { Menu, X, Phone, Mail, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/ui/Button";
+import { useContactModal } from "@/app/ContextProvider";
 
 // 1. Custom Hook for Scroll Logic (Senior Pattern: Decoupling)
 const useScroll = (threshold = 20) => {
@@ -19,6 +20,8 @@ const useScroll = (threshold = 20) => {
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { openModal } = useContactModal();
+
   const isScrolled = useScroll();
 
   // 2. Body Lock (Senior Pattern: Using robust overflow management)
@@ -33,7 +36,6 @@ const Navbar = () => {
   const navLinks = [
     { name: "About", href: "#about" },
     { name: "Services", href: "#services" },
-    { name: "Placements", href: "#placements" },
     { name: "Contact", href: "#contact" },
   ];
 
@@ -84,10 +86,10 @@ const Navbar = () => {
           {/* Brand Identity */}
           <Link
             href="/"
-            className="relative h-9 w-32 md:w-40 transition-opacity hover:opacity-80"
+            className="relative h-9 w-28 md:w-32 transition-opacity hover:opacity-80"
           >
             <Image
-              src="/images/Skillqon_Logo.webp"
+              src="/images/logo_text.png"
               alt="Skillqon Logo"
               fill
               className="object-contain"
@@ -111,13 +113,13 @@ const Navbar = () => {
               ))}
             </ul>
 
-            <Button onClick={() => console.log("clicked")}>Consultation</Button>
+            <Button onClick={openModal}>Consultation</Button>
           </div>
 
           {/* Mobile Menu Trigger */}
           <button
             onClick={() => setIsOpen(true)}
-            className="lg:hidden p-2.5 bg-slate-50 text-slate-900 rounded-xl hover:bg-slate-100 transition-all"
+            className="lg:hidden p-2.5 bg-slate-50 text-slate-900 rounded-xl hover:bg-slate-100 transition-all cursor-pointer"
             aria-label="Toggle Navigation"
           >
             <Menu size={24} />
@@ -142,15 +144,15 @@ const Navbar = () => {
           <div className="flex justify-between items-center mb-16">
             <div className="relative h-7 w-28">
               <Image
-                src="/images/Skillqon_Logo.webp"
-                alt="Logo"
+                src="/images/logo_text.png"
+                alt="Skillqon Logo"
                 fill
                 className="object-contain"
               />
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-3 bg-slate-950 text-white rounded-full hover:rotate-90 transition-all duration-300 shadow-xl"
+              className="p-3 bg-slate-950 text-white rounded-full hover:rotate-90 transition-all duration-300 shadow-xl cursor-pointer"
             >
               <X size={20} />
             </button>
@@ -181,17 +183,20 @@ const Navbar = () => {
             ))}
           </ul>
 
-          <div className="mt-auto pt-10">
-            <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 mb-6">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">
-                Systems Support
-              </p>
-              <p className="text-xl font-bold text-slate-900">+91 9600883379</p>
-            </div>
-            <button className="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl shadow-blue-200 active:scale-[0.98] transition-all">
-              Initialize Project
-            </button>
+          <div className="mt-auto mb-8 group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 transition-all hover:border-blue-100 hover:bg-slate-50/50">
+            <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-500">
+              Technical Support
+            </h3>
+            <a
+              href="tel:+919600883379"
+              className="text-xl font-semibold tracking-tight text-slate-900 transition-colors hover:text-blue-600"
+            >
+              +91 96008 83379
+            </a>
           </div>
+
+          {/* Primary Action */}
+          <Button onClick={openModal}>Consultation</Button>
         </div>
       </aside>
     </>

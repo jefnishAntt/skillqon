@@ -3,6 +3,8 @@ import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { ContactProvider } from "./ContextProvider";
+import { Form } from "@/components/Form";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,11 +31,14 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${geistMono.variable} font-sans antialiased`}
       >
-        <Navbar />
-        <main className="pt-20 lg:pt-24 min-h-screen">
-        {children}
-      </main>
-      <Footer />
+        <ContactProvider>
+          <Navbar />
+          <main className="pt-20 lg:pt-24 min-h-screen">
+            {children}
+            <Form />
+          </main>
+          <Footer />
+        </ContactProvider>
       </body>
     </html>
   );
