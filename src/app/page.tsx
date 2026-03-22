@@ -23,6 +23,7 @@ import {
   ArrowRight,
   Plus,
   Hash,
+  CheckCircle2,
 } from "lucide-react";
 import Image from "next/image";
 import { SERVICES_DATA, TESTIMONIALS_DATA } from "@/config";
@@ -399,10 +400,7 @@ export default function Home() {
                 </div>
 
                 {/* Floating "Stat" Card - Adds a senior UI touch */}
-                <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 hidden md:block animate-float">
-                  <div className="text-sm text-slate-400 mb-1">Uptime</div>
-                  <div className="text-2xl font-bold text-blue-600">99.99%</div>
-                </div>
+  
               </div>
             </div>
           </div>
@@ -417,7 +415,7 @@ export default function Home() {
               {/* Main Large Image (Top Left) */}
               <div className="col-span-7 h-[400px] md:h-[500px] relative rounded-lg overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-transform duration-500">
                 <Image
-                  src="/images/hero_sec_1.webp"
+                  src="/images/about-us-1.webp"
                   alt="Team Collaboration"
                   fill
                   className="object-cover"
@@ -429,7 +427,7 @@ export default function Home() {
               {/* Secondary Image (Bottom Right) */}
               <div className="col-span-5 h-[300px] md:h-[380px] relative rounded-lg overflow-hidden shadow-xl mt-20 border-4 border-white">
                 <Image
-                  src="/images/hero_sec_1.webp"
+                  src="/images/about-us-2.webp"
                   alt="Digital Strategy"
                   fill
                   className="object-cover rounded-lg"
@@ -438,7 +436,7 @@ export default function Home() {
 
               <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 md:-bottom-6 md:left-8 md:translate-x-0 z-30 group">
                 {/* Container with High-End Glassmorphism */}
-                <div className="relative flex items-center gap-5 p-5 pr-8 rounded-md bg-slate-950/90 backdrop-blur-xl border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] transition-all duration-500 ease-out group-hover:-translate-y-2 group-hover:border-blue-500/30">
+                <div className="relative flex items-center gap-5 p-5 pr-8 rounded-md bg-slate-950/90 backdrop-blur-xl border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] group-hover:border-blue-500/30">
                   {/* Visual Indicator: Complex Icon Stack */}
                   <div className="relative shrink-0">
                     <div className="w-14 h-14 rounded-full bg-linear-to-br from-slate-800 to-slate-900 border border-slate-700/50 flex items-center justify-center overflow-hidden">
@@ -472,7 +470,7 @@ export default function Home() {
                   <div className="flex flex-col">
                     <div className="flex items-baseline gap-1">
                       <span className="text-4xl font-semibold tracking-tighter text-white tabular-nums leading-none">
-                        12
+                        8
                         <span className="text-blue-500 font-light ml-0.5">
                           +
                         </span>
@@ -509,7 +507,7 @@ export default function Home() {
             <div className="flex items-center gap-3 mb-8">
               <div className="h-px w-8 bg-blue-600/30" />
               <span className="text-blue-600 font-mono text-[11px] uppercase tracking-[0.4em] font-bold">
-                Established // 2026
+                Established // 2018
               </span>
             </div>
 

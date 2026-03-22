@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useEffect, useId } from 'react';
-import { createPortal } from 'react-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Loader2, X, Send } from 'lucide-react';
-import { useContactModal } from '@/app/ContextProvider';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import React, { useEffect, useId } from "react";
+import { createPortal } from "react-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Loader2, X, Send } from "lucide-react";
+import { useContactModal } from "@/app/ContextProvider";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { Button } from "@/ui/Button";
 
 /** * Utility: Standardized Tailwind Class Merger
  */
@@ -27,14 +28,18 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 // --- Component: The Form ---
 const ContactForm = ({ onSuccess }: { onSuccess: () => void }) => {
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<ContactFormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
-    mode: "onTouched"
+    mode: "onTouched",
   });
 
   const onSubmit = async (data: ContactFormData) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Mock API Delay
+      await new Promise((resolve) => setTimeout(resolve, 1500)); // Mock API Delay
       console.log("Telemetry Payload:", data);
       onSuccess();
     } catch (err) {
@@ -45,30 +50,46 @@ const ContactForm = ({ onSuccess }: { onSuccess: () => void }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <div className="space-y-1.5">
-        <label className="text-sm font-semibold text-slate-700">Full Name</label>
+        <label className="text-sm font-semibold text-slate-700">
+          Full Name
+        </label>
         <input
           {...register("name")}
           placeholder="John Doe"
           className={cn(
-            "w-full px-4 py-3 rounded-xl border transition-all outline-none bg-slate-50 focus:bg-white",
-            errors.name ? "border-red-500 ring-red-50" : "border-slate-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10"
+            "w-full px-4 py-3 rounded border transition-all outline-none bg-slate-50 focus:bg-white",
+            errors.name
+              ? "border-red-500 ring-red-50"
+              : "border-slate-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10",
           )}
         />
-        {errors.name && <p className="text-xs font-bold text-red-500 leading-none">{errors.name.message}</p>}
+        {errors.name && (
+          <p className="text-xs font-bold text-red-500 leading-none">
+            {errors.name.message}
+          </p>
+        )}
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-sm font-semibold text-slate-700">Email Address</label>
+        <label className="text-sm font-semibold text-slate-700">
+          Email Address
+        </label>
         <input
           {...register("email")}
           type="email"
           placeholder="john@company.com"
           className={cn(
-            "w-full px-4 py-3 rounded-xl border transition-all outline-none bg-slate-50 focus:bg-white",
-            errors.email ? "border-red-500 ring-red-50" : "border-slate-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10"
+            "w-full px-4 py-3 rounded border transition-all outline-none bg-slate-50 focus:bg-white",
+            errors.email
+              ? "border-red-500 ring-red-50"
+              : "border-slate-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10",
           )}
         />
-        {errors.email && <p className="text-xs font-bold text-red-500 leading-none">{errors.email.message}</p>}
+        {errors.email && (
+          <p className="text-xs font-bold text-red-500 leading-none">
+            {errors.email.message}
+          </p>
+        )}
       </div>
 
       <div className="space-y-1.5">
@@ -77,21 +98,28 @@ const ContactForm = ({ onSuccess }: { onSuccess: () => void }) => {
           {...register("message")}
           rows={4}
           className={cn(
-            "w-full px-4 py-3 rounded-xl border transition-all outline-none resize-none bg-slate-50 focus:bg-white",
-            errors.message ? "border-red-500 ring-red-50" : "border-slate-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10"
+            "w-full px-4 py-3 rounded border transition-all outline-none resize-none bg-slate-50 focus:bg-white",
+            errors.message
+              ? "border-red-500 ring-red-50"
+              : "border-slate-200 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10",
           )}
         />
-        {errors.message && <p className="text-xs font-bold text-red-500 leading-none">{errors.message.message}</p>}
-      </div>
-
-      <button
-        disabled={isSubmitting}
-        className="w-full bg-slate-900 hover:bg-black disabled:bg-slate-300 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2 active:scale-[0.98] shadow-xl shadow-slate-200 mt-2"
-      >
-        {isSubmitting ? <Loader2 className="animate-spin" size={20} /> : (
-          <>Send Inquiry <Send size={18} /></>
+        {errors.message && (
+          <p className="text-xs font-bold text-red-500 leading-none">
+            {errors.message.message}
+          </p>
         )}
-      </button>
+      </div>
+      <div className="flex w-full items-center justify-center py-4">
+      <Button
+        type="submit"
+        isLoading={isSubmitting}
+        variant="primary"
+        rightIcon={<Send size={18} />}
+      >
+        Send Inquiry
+      </Button>
+      </div>
     </form>
   );
 };
@@ -104,18 +132,20 @@ export const Form = () => {
   // 1. Accessibility: Lock Scroll
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      return () => { document.body.style.overflow = 'unset'; };
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "unset";
+      };
     }
   }, [isOpen]);
 
   // 2. Accessibility: Keyboard Listeners
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeModal();
+      if (e.key === "Escape") closeModal();
     };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
   }, [closeModal]);
 
   if (!isOpen) return null;
@@ -123,7 +153,7 @@ export const Form = () => {
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop: CSS Transition via animate-in */}
-      <div 
+      <div
         className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm animate-in fade-in duration-300"
         onClick={closeModal}
         aria-hidden="true"
@@ -134,10 +164,10 @@ export const Form = () => {
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelId}
-        className="relative w-full max-w-lg bg-white rounded-[2rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 slide-in-from-bottom-8 duration-300 ease-out"
+        className="relative w-full max-w-lg bg-white rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 slide-in-from-bottom-8 duration-300 ease-out"
       >
         <div className="p-8 sm:p-12">
-          <button 
+          <button
             onClick={closeModal}
             className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all"
             aria-label="Close"
@@ -146,7 +176,10 @@ export const Form = () => {
           </button>
 
           <header className="mb-8">
-            <h2 id={labelId} className="text-4xl font-black text-slate-900 tracking-tight mb-2">
+            <h2
+              id={labelId}
+              className="text-4xl font-black text-slate-900 tracking-tight mb-2"
+            >
               Let's talk.
             </h2>
             <p className="text-slate-500 font-medium">
@@ -158,6 +191,6 @@ export const Form = () => {
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
