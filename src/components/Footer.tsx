@@ -20,7 +20,7 @@ const Footer = () => {
           <div className="lg:col-span-4">
             <Link
               href="/"
-              className="relative block h-10 w-36 md:w-40 transition-opacity hover:opacity-80 mb-2"
+              className="relative block h-10 w-32 md:w-40 transition-opacity hover:opacity-80 mb-2"
             >
               <Image
                 src="/images/logo_text.png"

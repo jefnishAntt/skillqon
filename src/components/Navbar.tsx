@@ -86,7 +86,7 @@ const Navbar = () => {
           {/* Brand Identity */}
           <Link
             href="/"
-            className="relative h-9 w-28 md:w-32 transition-opacity hover:opacity-80"
+            className="relative h-9 w-32 md:w-40 transition-opacity hover:opacity-80"
           >
             <Image
               src="/images/logo_text.png"
