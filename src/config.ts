@@ -46,3 +46,10 @@ export const TESTIMONIALS_DATA = [
   { name: "Elena Rossi", role: "VP Engineering", content: "Beyond just a tool, it's a fundamental shift in how we handle data streaming. Exceptional support too." },
   { name: "David Wu", role: "Lead Dev", content: "Finally, a solution that doesn't sacrifice speed for security. Our benchmarks improved by 40%." },
 ];
+
+export const FOOTER_SOLUTIONS = [
+  "Web Development",
+  "Cloud Architecture",
+  "AI Integrations",
+  "Cyber Security",
+];

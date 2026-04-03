@@ -213,7 +213,6 @@ const Testimonials = () => {
   return (
     <section className="bg-slate-50 overflow-hidden border-t border-slate-100 py-20 lg:py-32">
       <div className="container mx-auto px-6 lg:px-12">
-        
         {/* Header remains the same... */}
         <div className="max-w-4xl mx-auto mb-16 lg:mb-24 text-center">
           <h2 className="text-4xl md:text-6xl font-bold text-slate-950 leading-[0.9] tracking-tighter uppercase italic">
@@ -227,34 +226,49 @@ const Testimonials = () => {
         <div className="relative group/carousel">
           {/* Desktop Navigation - Hidden pointer events so they don't block the cards */}
           <div className="hidden xl:flex absolute top-1/2 -translate-y-1/2 -left-8 -right-8 justify-between pointer-events-none z-30 opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-500">
-             <NavButton onClick={scrollPrev} disabled={!prevBtnEnabled} icon={<ChevronLeft />} className="pointer-events-auto" />
-             <NavButton onClick={scrollNext} disabled={!nextBtnEnabled} icon={<ChevronRight />} className="pointer-events-auto" />
+            <NavButton
+              onClick={scrollPrev}
+              disabled={!prevBtnEnabled}
+              icon={<ChevronLeft />}
+              className="pointer-events-auto"
+            />
+            <NavButton
+              onClick={scrollNext}
+              disabled={!nextBtnEnabled}
+              icon={<ChevronRight />}
+              className="pointer-events-auto"
+            />
           </div>
 
           <div className="embla overflow-visible" ref={emblaRef}>
             <div className="embla__container flex -ml-4 lg:-ml-12">
               {TESTIMONIALS_DATA.map((t, i) => {
                 const isActive = selectedIndex === i;
-                
+
                 return (
                   <div
                     key={i}
                     className="embla__slide flex-[0_0_85%] md:flex-[0_0_60%] lg:flex-[0_0_45%] pl-4 lg:pl-12 min-w-0"
                   >
-                    <article 
+                    <article
                       className={`
                         relative h-full flex flex-col bg-white p-8 lg:p-14 rounded-xl border border-slate-100 
                         transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform
-                        ${isActive 
-                          ? "opacity-100 scale-100 shadow-2xl shadow-blue-900/10" 
-                          : "opacity-30 scale-[0.9] grayscale-[0.5] blur-[1px]"
+                        ${
+                          isActive
+                            ? "opacity-100 scale-100 shadow-2xl shadow-blue-900/10"
+                            : "opacity-30 scale-[0.9] grayscale-[0.5] blur-[1px]"
                         }
                       `}
                     >
-                      <Quote className={`absolute top-10 right-10 size-12 transition-colors duration-700 ${isActive ? 'text-blue-50' : 'text-slate-50'}`} />
+                      <Quote
+                        className={`absolute top-10 right-10 size-12 transition-colors duration-700 ${isActive ? "text-blue-50" : "text-slate-50"}`}
+                      />
 
                       <div className="relative z-10 flex-grow">
-                        <p className={`text-xl lg:text-2xl leading-relaxed font-light mb-12 transition-colors duration-700 ${isActive ? 'text-slate-800' : 'text-slate-400'}`}>
+                        <p
+                          className={`text-xl lg:text-2xl leading-relaxed font-light mb-12 transition-colors duration-700 ${isActive ? "text-slate-800" : "text-slate-400"}`}
+                        >
                           &ldquo;{t.content}&rdquo;
                         </p>
                       </div>
@@ -276,14 +290,14 @@ const Testimonials = () => {
               })}
             </div>
           </div>
-          
+
           {/* Mobile Pagination (Simplified dots or buttons) */}
           <div className="flex justify-center gap-2 mt-12">
             {TESTIMONIALS_DATA.map((_, i) => (
               <button
                 key={i}
                 onClick={() => emblaApi?.scrollTo(i)}
-                className={`h-1.5 transition-all duration-500 rounded-full ${selectedIndex === i ? 'w-8 bg-blue-600' : 'w-2 bg-slate-200'}`}
+                className={`h-1.5 transition-all duration-500 rounded-full ${selectedIndex === i ? "w-8 bg-blue-600" : "w-2 bg-slate-200"}`}
                 aria-label={`Go to slide ${i + 1}`}
               />
             ))}
@@ -314,7 +328,6 @@ const NavButton = memo(({ onClick, disabled, icon, className = "" }: any) => (
 ));
 
 NavButton.displayName = "NavButton";
-
 
 // --- Main Components ---
 export default function Home() {
@@ -347,9 +360,7 @@ export default function Home() {
               </p>
 
               <div className="flex flex-col sm:flex-row items-center gap-6 lg:gap-10">
-                <Button onClick={openModal}>
-                  Start Your Project
-                </Button>
+                <Button onClick={openModal}>Start Your Project</Button>
 
                 {/* Refined Social Proof */}
                 <div className="flex items-center gap-4">
@@ -400,7 +411,6 @@ export default function Home() {
                 </div>
 
                 {/* Floating "Stat" Card - Adds a senior UI touch */}
-  
               </div>
             </div>
           </div>
@@ -633,115 +643,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Placements Section */}
-      {/* <section
-        id="placements"
-        className="bg-white py-16 lg:py-20 border-y border-slate-100"
-      >
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-            <div className="max-w-xl">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-blue-600 font-semibold border-l-4 border-blue-600 pl-3 block uppercase text-sm">
-                  Career Impact
-                </span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-semibold text-slate-900 tracking-tight">
-                Where elite talent meets <br className="hidden md:block" />
-                <span className="text-slate-400">industry leaders.</span>
-              </h2>
-            </div>
-            <div className="flex gap-12">
-              <div>
-                <div className="text-3xl font-bold text-slate-900">94%</div>
-                <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">
-                  Placement Rate
-                </div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-slate-900">₹120k</div>
-                <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">
-                  Avg. Package
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div
-              className="lg:col-span-8 group relative rounded-[2rem] overflow-hidden bg-slate-100 shadow-xl
-                aspect-[4/5] sm:aspect-video 
-                lg:h-[500px] lg:aspect-auto"
-            >
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent z-10 opacity-90 lg:opacity-100" />
-
-              <Image
-                src="/images/hero_sec_1.webp"
-                alt="Alex Rivera - Placed at Google"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-1000 ease-out"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 800px"
-                priority
-              />
-
-              <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 z-20">
-                <div className="flex items-center gap-3 mb-3 md:mb-4">
-                  <div className="px-3 py-1 bg-blue-600 text-white text-[9px] md:text-[10px] font-black uppercase tracking-widest rounded-md shadow-lg shadow-blue-900/20">
-                    Placed at Oracle
-                  </div>
-                </div>
-
-                <h3 className="text-2xl md:text-4xl font-black text-white tracking-tighter leading-none">
-                  Alex Rivera
-                </h3>
-
-                <p className="text-slate-300 font-bold uppercase text-[10px] md:text-xs tracking-[0.2em] mt-2 md:mt-3 flex items-center gap-2">
-                  <span className="w-4 h-[1px] bg-blue-500 hidden md:block"></span>
-                  Senior Software Engineer
-                </p>
-              </div>
-            </div>
-
-            <div className="lg:col-span-4 space-y-8">
-              <div className="p-10 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col justify-between h-full">
-                <div>
-                  <div className="w-10 h-10 bg-blue-600/10 rounded-lg flex items-center justify-center mb-6">
-                    <Rocket size={20} className="text-blue-600" />
-                  </div>
-                  <p className="text-xl text-slate-700 leading-relaxed font-medium">
-                    "The curriculum was intense, but the placement support was
-                    the ultimate game changer for my career trajectory."
-                  </p>
-                </div>
-                <div className="mt-8 pt-8 border-t border-slate-200 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-slate-300 border-2 border-white shadow-sm" />
-                  <div>
-                    <p className="font-bold text-slate-900 text-sm tracking-tight">
-                      Alumni Testimonial
-                    </p>
-                    <p className="text-xs text-slate-500 font-medium italic">
-                      Class of 2024
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-16 py-10 border-t border-slate-100">
-            <div className="grid grid-cols-2 md:flex md:flex-wrap justify-items-center justify-between items-center gap-y-10 gap-x-8 opacity-40 grayscale">
-              {["MICROSOFT", "ADOBE", "META", "AMAZON"].map((logo) => (
-                <span
-                  key={logo}
-                  className="text-xs md:text-sm font-black tracking-[0.3em] hover:opacity-100 transition-opacity cursor-default whitespace-nowrap"
-                >
-                  {logo}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section> */}
       {/* Testimonials Section */}
       <Testimonials />
       {/* Final CTA Section */}
@@ -755,7 +656,7 @@ export default function Home() {
             <div className="relative z-10 max-w-4xl mx-auto">
               {/* Tagline */}
               <span className="inline-block font-mono text-[10px] uppercase tracking-[0.4em] font-bold text-blue-200 mb-6">
-                Deployment Terminal
+                Let's Build Something Extraordinary
               </span>
 
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-8 leading-[1.05] tracking-tight text-balance">
@@ -771,11 +672,13 @@ export default function Home() {
                 that trust our framework for mission-critical IT architecture.
               </p>
 
-              <div className="flex flex-col sm:flex-row justify-center items-center gap-5">
-                <Button className="bg-white text-blue-600 hover:bg-blue-200" onClick={openModal} >Start Your Project</Button>
-
-                <Button variant="outline" className="bg-blue-700/50 text-white border border-blue-400/30 hover:bg-blue-600" onClick={openModal} >Contact Sales</Button>
-              </div>
+              <Button
+                size="lg"
+                className="bg-white text-blue-600 hover:bg-blue-200"
+                onClick={openModal}
+              >
+                Start Your Project
+              </Button>
 
               {/* Subtle Footer Link */}
               <p className="mt-10 text-blue-300/60 text-[10px] uppercase tracking-widest font-medium">

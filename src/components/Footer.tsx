@@ -1,3 +1,4 @@
+import { FOOTER_SOLUTIONS } from "@/config";
 import {
   ChevronRight,
   Rocket,
@@ -39,11 +40,17 @@ const Footer = () => {
               {[
                 { name: "LinkedIn", icon: <Linkedin size={18} />, href: "#" },
                 { name: "X", icon: <Twitter size={18} />, href: "#" }, // Use Twitter icon for X
-                { name: "Instagram", icon: <Instagram size={18} />, href: "#" },
+                {
+                  name: "Instagram",
+                  icon: <Instagram size={18} />,
+                  href: "https://www.instagram.com/skillqon_consulting_services?igsh=NjZicjg0aXlsbjQz",
+                },
               ].map((social) => (
                 <a
                   key={social.name}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full border border-slate-700 flex items-center justify-center hover:bg-blue-600 hover:border-blue-600 transition-all group text-slate-500 hover:text-white"
                 >
                   <span className="sr-only">{social.name}</span>
@@ -59,26 +66,9 @@ const Footer = () => {
                 Solutions
               </h4>
               <ul className="space-y-4 text-sm">
-                <li>
-                  <a href="#" className="hover:text-blue-500 transition-colors">
-                    Web Development
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-blue-500 transition-colors">
-                    Cloud Architecture
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-blue-500 transition-colors">
-                    AI Integrations
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-blue-500 transition-colors">
-                    Cyber Security
-                  </a>
-                </li>
+                {FOOTER_SOLUTIONS.map((solution) => (
+                  <li key={solution}>{solution}</li>
+                ))}
               </ul>
             </div>
             <div>
@@ -109,24 +99,55 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Replaced Newsletter with Address */}
+            {/* Address */}
             <div className="col-span-2 md:col-span-1">
               <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">
-                Our Office
+                Our Offices
               </h4>
-              <div className="flex gap-3">
-                <MapPin size={18} className="text-blue-500 shrink-0 mt-1" />
-                <address className="not-italic text-sm text-slate-400 leading-relaxed">
-                  23-74/5, DJS Building,
-                  <br />
-                  First Floor, Muttaicadu,
-                  <br />
-                  Kumarapuram Post,
-                  <br />
-                  Kanyakumari District – 629164,
-                  <br />
-                  Tamil Nadu, India.
-                </address>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-8 md:gap-6">
+                {/* Main Office */}
+                <div className="group">
+                  <div className="flex gap-3 mb-2">
+                    <MapPin
+                      size={18}
+                      className="text-blue-500 shrink-0 mt-1 group-hover:scale-110 transition-transform"
+                    />
+                    <span className="text-slate-200 font-semibold text-sm">
+                      Headquarters
+                    </span>
+                  </div>
+                  <address className="not-italic text-sm text-slate-400 leading-relaxed pl-[30px]">
+                    23-74/5, DJS Building,
+                    <br />
+                    First Floor, Muttaicadu,
+                    <br />
+                    Kumarapuram Post,
+                    <br />
+                    Kanyakumari District – 629164,
+                    <br />
+                    Tamil Nadu, India.
+                  </address>
+                </div>
+
+                {/* Thoothukudi Branch */}
+                <div className="group border-t border-slate-800 pt-6 sm:border-t-0 sm:pt-0 md:border-t md:pt-6">
+                  <div className="flex gap-3 mb-2">
+                    <MapPin
+                      size={18}
+                      className="text-blue-500 shrink-0 mt-1 group-hover:scale-110 transition-transform"
+                    />
+                    <span className="text-slate-200 font-semibold text-sm">
+                      Thoothukudi Branch
+                    </span>
+                  </div>
+                  <address className="not-italic text-sm text-slate-400 leading-relaxed pl-[30px]">
+                    160C/9B, Kurinji Nagar 6th Street,
+                    <br />
+                    Thoothukudi – 628002,
+                    <br />
+                    Tamil Nadu, India.
+                  </address>
+                </div>
               </div>
             </div>
           </div>

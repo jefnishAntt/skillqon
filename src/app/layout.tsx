@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import { ContactProvider } from "./ContextProvider";
 import { Form } from "@/components/Form";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -17,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tech Platform",
+  title: "SkillQon",
   description: "High-performance tech solutions",
 };
 
@@ -37,6 +38,7 @@ export default function RootLayout({
             {children}
             <Form />
           </main>
+          <WhatsAppButton />
           <Footer />
         </ContactProvider>
       </body>

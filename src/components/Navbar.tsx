@@ -59,16 +59,19 @@ const Navbar = () => {
           <div className="min-h-0 container mx-auto px-6 flex justify-between items-center text-[11px] font-bold uppercase tracking-widest text-slate-400">
             <div className="flex gap-10">
               <a
-                href="tel:+919600883379"
-                className="flex items-center gap-2 hover:text-blue-600 transition-colors"
+                href="https://wa.me/919600883379"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-green-600 transition-colors"
               >
-                <Phone size={12} className="text-blue-600" /> +91 9600883379
+                <Phone size={12} className="text-green-600" /> +91 9600883379
               </a>
               <a
-                href="mailto:info@skillqon.com"
+                href="mailto:skillqon@gmail.com"
                 className="flex items-center gap-2 hover:text-blue-600 transition-colors"
               >
-                <Mail size={12} className="text-blue-600" /> info@skillqon.com
+                <Mail size={12} className="text-blue-600" />
+                skillqon@gmail.com
               </a>
             </div>
             <div className="flex items-center gap-6">
